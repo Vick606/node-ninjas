@@ -13,13 +13,17 @@ const server = http.createServer((req, res) => {
   }
 
   const extname = String(path.extname(filePath)).toLowerCase();
-  const contentType = 'text/html';
+  const contentType = {
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.js': 'text/javascript',
+  }[extname] || 'application/octet-stream';
 
   fs.readFile(filePath, (error, content) => {
     if (error) {
       if (error.code === 'ENOENT') {
         fs.readFile('./404.html', (error, content) => {
-          res.writeHead(404, { 'Content-Type': contentType });
+          res.writeHead(404, { 'Content-Type': 'text/html' });
           res.end(content, 'utf-8');
         });
       } else {
